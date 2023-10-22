@@ -1,5 +1,5 @@
+/Función para calcular y mostrar la tabla de amortización*/ 
 function gen_table() {
-    document.getElementById("tab").innerHTML = "";
     let n = Number(document.getElementById("capital").value);
     let n2 = Number(document.getElementById("couta").value);
     let n3 = Number(document.getElementById("interes").value);
@@ -16,31 +16,57 @@ function gen_table() {
             let d2 = i2.toFixed(2);
             let r = ca + i2;
             let d3 = r.toFixed(2);
-            cuotas.push([i, d1, d2, d3]);
+            cuotas.push({ Cuota: i, Capital: d1, Interes: d2, Importe: d3 });
 
             t_i += i2;
             t_p += r;
         }
 
-        let tabBody = document.getElementById("tab");
-        for (let i = 0; i < cuotas.length; i++) {
-            let row = document.createElement("tr");
-            for (let j = 0; j < cuotas[i].length; j++) {
-                let cell = document.createElement("td");
-                cell.textContent = cuotas[i][j];
-                row.appendChild(cell);
-            }
-            tabBody.appendChild(row);
-        }
+        /* Guardar los datos de la simulación en localStorage como JSON */
+        localStorage.setItem("simulacion", JSON.stringify(cuotas));
+        localStorage.setItem("totalInteres", t_i);
+        localStorage.setItem("totalPagar", t_p);
 
-        let n1 = n.toFixed(2);
-        let d4 = t_i.toFixed(2);
-        let d5 = t_p.toFixed(2);
+        /*Mostrar la tabla de amortización en el DOM*/ 
+        displayAmortizationTable(cuotas);
 
-        document.getElementById("t1").textContent = n1;
-        document.getElementById("t2").textContent = d4;
-        document.getElementById("t3").textContent = d5;
+        /*Mostrar los totales en el DOM*/ 
+        document.getElementById("t1").textContent = n.toFixed(2);
+        document.getElementById("t2").textContent = t_i.toFixed(2);
+        document.getElementById("t3").textContent = t_p.toFixed(2);
     } else {
         alert("Falta ingresar un número válido en todos los campos");
     }
 }
+
+/*Función para mostrar la tabla de amortización en el DOM*/ 
+function displayAmortizationTable(data) {
+    let tabBody = document.getElementById("tab");
+    tabBody.innerHTML = "";
+
+    data.forEach((row) => {
+        let newRow = document.createElement("tr");
+        for (let key in row) {
+            let cell = document.createElement("td");
+            cell.textContent = row[key];
+            newRow.appendChild(cell);
+        }
+        tabBody.appendChild(newRow);
+    });
+}
+
+/*Evento para cargar datos almacenados al cargar la página*/ 
+window.onload = function () {
+    let storedSimulacion = localStorage.getItem("simulacion");
+    if (storedSimulacion) {
+        let parsedSimulacion = JSON.parse(storedSimulacion);
+        displayAmortizationTable(parsedSimulacion);
+
+        let totalInteres = localStorage.getItem("totalInteres");
+        let totalPagar = localStorage.getItem("totalPagar");
+
+        document.getElementById("t1").textContent = totalInteres.toFixed(2);
+        document.getElementById("t2").textContent = totalPagar.toFixed(2);
+        document.getElementById("t3").textContent = totalInteres.toFixed(2);
+    }
+};
