@@ -1,0 +1,18 @@
+{
+    "cuotas": [
+        {
+            "Cuota": 1,
+            "Capital": 1000,
+            "Interes": 50,
+            "Importe": 1050
+        },
+        {
+            "Cuota": 2,
+            "Capital": 950,
+            "Interes": 47.5,
+            "Importe": 997.5
+        }
+    ],
+    "totalInteres": 500,
+    "totalPagar": 5500
+}

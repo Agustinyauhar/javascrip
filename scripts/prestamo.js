@@ -1,4 +1,38 @@
-/Función para calcular y mostrar la tabla de amortización*/ 
+/* Función para cargar datos desde un archivo JSON local*/
+function cargarDatosDesdeJSON() {
+    fetch("datos.json")  
+        .then((response) => response.json())
+        .then((data) => {
+            /* Mostrar la tabla de amortización en el DOM*/
+            displayAmortizationTable(data.cuotas);
+
+            /*Mostrar los totales en el DOM*/
+            document.getElementById("t1").textContent = data.totalInteres.toFixed(2);
+            document.getElementById("t2").textContent = data.totalPagar.toFixed(2);
+            document.getElementById("t3").textContent = data.totalInteres.toFixed(2);
+        })
+        .catch((error) => {
+            console.error("Error al cargar datos desde JSON: " + error);
+        });
+}
+
+/*Función para mostrar la tabla de amortización en el DOM*/ 
+function displayAmortizationTable(data) {
+    let tabBody = document.getElementById("tab");
+    tabBody.innerHTML = "";
+
+    data.forEach((row) => {
+        let newRow = document.createElement("tr");
+        for (let key in row) {
+            let cell = document.createElement("td");
+            cell.textContent = row[key];
+            newRow.appendChild(cell);
+        }
+        tabBody.appendChild(newRow);
+    });
+}
+
+/*Función para calcular y mostrar la tabla de amortización*/
 function gen_table() {
     let n = Number(document.getElementById("capital").value);
     let n2 = Number(document.getElementById("couta").value);
@@ -22,15 +56,15 @@ function gen_table() {
             t_p += r;
         }
 
-        /* Guardar los datos de la simulación en localStorage como JSON */
+        /* Guarda los datos de la simulación en localStorage como JSON*/ 
         localStorage.setItem("simulacion", JSON.stringify(cuotas));
         localStorage.setItem("totalInteres", t_i);
         localStorage.setItem("totalPagar", t_p);
 
-        /*Mostrar la tabla de amortización en el DOM*/ 
+        /*Mostrar la tabla de amortización en el DOM*/
         displayAmortizationTable(cuotas);
 
-        /*Mostrar los totales en el DOM*/ 
+        /*  Mostrar los totales en el DOM*/
         document.getElementById("t1").textContent = n.toFixed(2);
         document.getElementById("t2").textContent = t_i.toFixed(2);
         document.getElementById("t3").textContent = t_p.toFixed(2);
@@ -39,34 +73,7 @@ function gen_table() {
     }
 }
 
-/*Función para mostrar la tabla de amortización en el DOM*/ 
-function displayAmortizationTable(data) {
-    let tabBody = document.getElementById("tab");
-    tabBody.innerHTML = "";
-
-    data.forEach((row) => {
-        let newRow = document.createElement("tr");
-        for (let key in row) {
-            let cell = document.createElement("td");
-            cell.textContent = row[key];
-            newRow.appendChild(cell);
-        }
-        tabBody.appendChild(newRow);
-    });
-}
-
-/*Evento para cargar datos almacenados al cargar la página*/ 
+/* Evento para cargar datos almacenados al cargar la página*/
 window.onload = function () {
-    let storedSimulacion = localStorage.getItem("simulacion");
-    if (storedSimulacion) {
-        let parsedSimulacion = JSON.parse(storedSimulacion);
-        displayAmortizationTable(parsedSimulacion);
-
-        let totalInteres = localStorage.getItem("totalInteres");
-        let totalPagar = localStorage.getItem("totalPagar");
-
-        document.getElementById("t1").textContent = totalInteres.toFixed(2);
-        document.getElementById("t2").textContent = totalPagar.toFixed(2);
-        document.getElementById("t3").textContent = totalInteres.toFixed(2);
-    }
+    cargarDatosDesdeJSON();
 };
